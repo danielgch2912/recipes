@@ -7,6 +7,7 @@ import nl.abnamro.recipes.dto.RecipeDto;
 import nl.abnamro.recipes.repository.IngredientRepository;
 import nl.abnamro.recipes.repository.RecipeRepository;
 import nl.abnamro.recipes.utils.Errors;
+import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
@@ -26,8 +28,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class RecipeControllerTest {
+
+	@LocalServerPort
+	int port;
 
 	@Autowired
 	private RecipeRepository recipeRepository;
@@ -43,9 +48,10 @@ class RecipeControllerTest {
 
 	public static String URL_RECIPE_FIND = "/v1/recipe/find";
 
-	@BeforeAll
-	public static void before() {
-		RestAssured.baseURI = "http://localhost:8080/api";
+	@BeforeEach
+	public void before() {
+		RestAssured.baseURI = "http://localhost:" + port + "/api";
+		//RestAssured.port = port;
 	}
 
 	@BeforeEach
@@ -141,7 +147,8 @@ class RecipeControllerTest {
 		int i = 0;
 		for(var ingredientFromDB : ingredientsFromDB) {
 			assertThat(ingredientFromDB).isNotNull();
-			assertThat(ingredientFromDB.getTitle()).isEqualTo(recipe.ingredients.get(i));
+
+			assertThat(recipe.ingredients.contains(ingredientFromDB.getTitle()));
 			i++;
 		}
 

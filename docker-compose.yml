@@ -1,0 +1,31 @@
+version: '3.3'
+services:
+  mysql_db:
+    image: mysql:5.7
+    container_name: mysql
+    restart: 'no'
+    environment:
+      MYSQL_HOST: 'mysql_db'
+      MYSQL_DATABASE: 'abnrecipes'
+      MYSQL_USER: 'abnuser'
+      MYSQL_PASSWORD: '123'
+      MYSQL_ROOT_PASSWORD: '123'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - ./src/main/resources/database/database.sql:/docker-entrypoint-initdb.d/dump.sql
+  recipes:
+    container_name: recipes
+    image: latest/recipes
+    restart: 'no'
+    environment:
+      MYSQL_HOST: 'mysql_db'
+    build: .
+    ports:
+      - '8080:8080'
+    depends_on:
+      - mysql_db
+    links:
+      - mysql_db
