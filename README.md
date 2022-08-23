@@ -1,6 +1,6 @@
 # ABN Recipes
 
-ABN Recipes is a service using REST Webservices to find and maintain recipes build using Java, Spring Boot framework and MySql database.
+ABN Recipes is a service that uses REST Webservices to find and maintain recipes. It was built using Java, Spring Boot framework and MySql database.
 
 Requirements:
  - Java 17
@@ -48,10 +48,10 @@ To delete a recipe use the DELETE method with **/api/v1/recipe/{recipeID}** as u
 To find a recipe, you can do a GET on the url: **/api/v1/recipe/find** using the following parameters:
 
 ````
-text: Look for this text in the title or instructions variables.
+text: Text filter to be applied in title and instructions of recipes.
 include: Includes a determined ingredient in the search
 exclude: Excludes a determined ingredient in the search
-servings: How many people this recipes serves
+servings: How many people this recipe serves
 vegetarian: Whether it is a vegetarian recipe or not
 ```` 
 
@@ -60,7 +60,7 @@ To run the application using docker, run the following command
     docker compose up
 ````
 
-To execute the tests you can use maven
+To execute the tests you can use maven command
 ````shell
 mvn clean test
 ````
@@ -74,6 +74,6 @@ The data structure used by the controller is based on the Data Transfer Object d
 for transforming data into entities to be handled by the repository.
 
 #### Database
-I have decided to use a relational database because it will be easier to avoid repetition of ingredients between recipes.
+I have decided to use a relational database because it's easier to avoid repetition of ingredients between recipes.
 The database was modeled in 3 tables: recipe, ingredient and recipe_ingredient. The table recipe_ingredient is a join
 table used to map the N:N relationship between recipe and ingredient. Check **database.sql** for details of the database structure.
