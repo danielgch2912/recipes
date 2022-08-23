@@ -3,9 +3,8 @@ FROM openjdk:17-alpine
 
 WORKDIR /recipe_app
 
-COPY src .
-COPY .mvn .
+COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
-CMD ["./mvnw", "spring-boot:run"]
+COPY src ./src
 
-EXPOSE 8080
+CMD ["./mvnw", "spring-boot:run"]

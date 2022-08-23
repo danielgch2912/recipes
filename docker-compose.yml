@@ -5,7 +5,6 @@ services:
     container_name: mysql
     restart: 'no'
     environment:
-      MYSQL_HOST: 'mysql_db'
       MYSQL_DATABASE: 'abnrecipes'
       MYSQL_USER: 'abnuser'
       MYSQL_PASSWORD: '123'

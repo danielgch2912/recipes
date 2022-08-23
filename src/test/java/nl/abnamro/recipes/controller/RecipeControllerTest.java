@@ -51,7 +51,6 @@ class RecipeControllerTest {
 	@BeforeEach
 	public void before() {
 		RestAssured.baseURI = "http://localhost:" + port + "/api";
-		//RestAssured.port = port;
 	}
 
 	@BeforeEach
@@ -178,12 +177,131 @@ class RecipeControllerTest {
 				.statusCode(HttpStatus.BAD_REQUEST.value())
 				.extract()
 				.as(ErrorDto[].class);
-				//.body("field", equalTo("title"))
-				//.body("message", equalTo(Errors.RECIPE_SAME_TITLE));
 
 		assertThat(errors.length).isEqualTo(1);
 		assertThat(errors[0].getField()).isEqualTo("title");
 		assertThat(errors[0].getMessage()).isEqualTo(Errors.RECIPE_SAME_TITLE);
+	}
+
+	@Test
+	void updateRecipe() {
+		// Save a recipe
+		var recipe = okRecipeList.get(0);
+
+		given()
+				.body(recipe)
+				.header(HttpHeaders.CONTENT_TYPE, ContentType.JSON)
+				.when()
+				.post(URL_RECIPE)
+				.then()
+				.statusCode(HttpStatus.OK.value());
+
+		var savedRecipe = recipeRepository.findByTitle(recipe.getTitle());
+		assertThat(savedRecipe.isPresent()).isTrue();
+
+		// Update recipe
+		var title = "This is a new title";
+		recipe.setTitle(title);
+		given()
+				.body(recipe)
+				.header(HttpHeaders.CONTENT_TYPE, ContentType.JSON)
+				.when()
+				.put(URL_RECIPE)
+				.then()
+				.statusCode(HttpStatus.OK.value());
+
+		var updatedRecipe = recipeRepository.findByTitle(recipe.getTitle());
+		assertThat(updatedRecipe.isPresent()).isTrue();
+		assertThat(updatedRecipe.get().getRecipeId()).isNotNull();
+		assertThat(updatedRecipe.get().getTitle()).isEqualTo(title);
+	}
+
+	@Test
+	void putRecipe() {
+		var recipe = okRecipeList.get(0);
+
+		// User PUT method to insert a new recipe
+		given()
+				.body(recipe)
+				.header(HttpHeaders.CONTENT_TYPE, ContentType.JSON)
+				.when()
+				.put(URL_RECIPE)
+				.then()
+				.statusCode(HttpStatus.OK.value());
+
+		var putRecipe = recipeRepository.findByTitle(recipe.getTitle());
+		assertThat(putRecipe.isPresent()).isTrue();
+		assertThat(putRecipe.get().getRecipeId()).isNotNull();
+	}
+
+	@Test
+	void updateNonExistentRecipe() {
+		var recipe = okRecipeList.get(0);
+
+		// Set an invalid ID
+		recipe.setRecipeId(9999);
+
+		// User PUT method to insert a new recipe
+		ErrorDto[] errors = given()
+				.body(recipe)
+				.header(HttpHeaders.CONTENT_TYPE, ContentType.JSON)
+				.when()
+				.put(URL_RECIPE)
+				.then()
+				.statusCode(HttpStatus.BAD_REQUEST.value())
+				.extract()
+				.as(ErrorDto[].class);
+
+		assertThat(errors.length).isEqualTo(1);
+		assertThat(errors[0].getField()).isEqualTo("recipeId");
+		assertThat(errors[0].getMessage()).isEqualTo(Errors.RECIPE_NOT_FOUND);
+	}
+
+	@Test
+	void deleteRecipes() {
+		var recipe = okRecipeList.get(0);
+
+		given()
+				.body(recipe)
+				.header(HttpHeaders.CONTENT_TYPE, ContentType.JSON)
+				.when()
+				.post(URL_RECIPE)
+				.then()
+				.statusCode(HttpStatus.OK.value());
+
+		var savedRecipe = recipeRepository.findByTitle(recipe.getTitle());
+		assertThat(savedRecipe.isPresent()).isTrue();
+
+		var recipeId = savedRecipe.get().getRecipeId();
+
+		given()
+				.header(HttpHeaders.CONTENT_TYPE, ContentType.JSON)
+				.when()
+				.delete(URL_RECIPE + "/" + recipeId)
+				.then()
+				.statusCode(HttpStatus.OK.value());
+
+		var recipeFromDB = recipeRepository.findById(recipeId);
+		assertThat(recipeFromDB).isNotPresent();
+	}
+
+	@Test
+	void deleteNonExistentRecipe() {
+		// Recipe Id that does not exists
+		var recipeId = "9999";
+
+		ErrorDto[] errors = given()
+				.header(HttpHeaders.CONTENT_TYPE, ContentType.JSON)
+				.when()
+				.delete(URL_RECIPE + "/" + recipeId)
+				.then()
+				.statusCode(HttpStatus.BAD_REQUEST.value())
+				.extract()
+				.as(ErrorDto[].class);
+
+		assertThat(errors.length).isEqualTo(1);
+		assertThat(errors[0].getField()).isEqualTo("recipeId");
+		assertThat(errors[0].getMessage()).isEqualTo(Errors.RECIPE_NOT_FOUND);
 	}
 
 	@Test

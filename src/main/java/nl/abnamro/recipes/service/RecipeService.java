@@ -41,7 +41,7 @@ public class RecipeService {
         }
 
         var recipeFromDB = recipeRepository.findById(recipeDto.getRecipeId());
-        if (recipeFromDB == null) {
+        if (recipeFromDB.isEmpty()) {
             throw new ServiceErrorException(new ErrorDto("recipeId", Errors.RECIPE_NOT_FOUND));
         }
 

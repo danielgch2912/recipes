@@ -67,7 +67,7 @@ public class RecipeController {
     }
 
     @DeleteMapping("/{recipeId}")
-    public ResponseEntity saveOrUpdate(@PathVariable Integer recipeId) {
+    public ResponseEntity delete(@PathVariable Integer recipeId) {
 
         try {
             service.delete(recipeId);
