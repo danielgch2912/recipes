@@ -8,7 +8,7 @@ Requirements:
  - Docker Compose
 
 The webservice data structure is:
-````json
+````
 {
     "recipeId": Integer,
     "title": String,
