@@ -19,7 +19,4 @@ public class Ingredient {
     private Integer ingredientId;
 
     private String title;
-
-    //@ManyToMany(mappedBy = "ingredients")
-    //private List<Recipe> recipes;
 }

@@ -62,7 +62,7 @@ To run the application using docker, run the following command
 
 To execute the tests you can use maven command
 ````shell
-mvn clean test
+mvnw clean test
 ````
 
 ### Architectural Decisions
