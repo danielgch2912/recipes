@@ -1,32 +1,21 @@
 package nl.abnamro.recipes.controller;
 
 import lombok.RequiredArgsConstructor;
-import nl.abnamro.recipes.domain.Ingredient;
-import nl.abnamro.recipes.dto.ErrorDto;
 import nl.abnamro.recipes.dto.RecipeDto;
-import nl.abnamro.recipes.repository.IngredientRepository;
-import nl.abnamro.recipes.repository.RecipeRepository;
 import nl.abnamro.recipes.service.RecipeService;
 import nl.abnamro.recipes.service.ServiceErrorException;
-import nl.abnamro.recipes.utils.Errors;
+import nl.abnamro.recipes.utils.SampleData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1/recipe")
 public class RecipeController {
-
-    @Autowired
-    private RecipeRepository recipeRepository;
-
-    @Autowired
-    private IngredientRepository ingredientRepository;
 
     @Autowired
     private RecipeService service;
@@ -39,7 +28,7 @@ public class RecipeController {
             @RequestParam(required = false) Integer servings,
             @RequestParam(required = false) Boolean vegetarian){
 
-        var ls = recipeRepository.find(text, include, exclude, servings, vegetarian);
+        var ls = service.find(text, include, exclude, servings, vegetarian);
 
         return RecipeDto.toDTO(ls);
     }
@@ -71,6 +60,28 @@ public class RecipeController {
 
         try {
             service.delete(recipeId);
+            return ResponseEntity.ok().build();
+        } catch(ServiceErrorException e) {
+            return ResponseEntity.badRequest().body(e.getErrors());
+        }
+    }
+
+    /**
+     * This method is here just for test purposes. It will generate sample data
+     * that can be inserted without running the testcase. The purpose is to
+     * look for a recipe directly from browser or Postman after using
+     * docker compose to run the application.
+     */
+    @GetMapping("/sampledata")
+    public ResponseEntity GenerateSampleData()
+    {
+        try {
+            var data = SampleData.create();
+
+            for (var d: data) {
+                service.save(d);
+            }
+
             return ResponseEntity.ok().build();
         } catch(ServiceErrorException e) {
             return ResponseEntity.badRequest().body(e.getErrors());

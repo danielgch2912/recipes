@@ -27,14 +27,14 @@ public class CustomRecipeRepositoryImpl implements CustomRecipeRepository {
 
         List<Predicate> predicatesAnd = new ArrayList<Predicate>();
 
-        if (text != null && text != "") {
+        if (text != null && !text.isEmpty()) {
             Predicate titlePredicate = cb.like(recipe.get("title"), "%" + text + "%");
             Predicate instructionsPredicate = cb.like(recipe.get("instructions"), "%" + text + "%");
 
             predicatesAnd.add(cb.or(titlePredicate, instructionsPredicate));
         }
 
-        if (include != null && include != "") {
+        if (include != null && !include.isEmpty()) {
             Subquery<Ingredient> subQuery = cq.subquery(Ingredient.class);
             Root<Recipe> rec = subQuery.from(Recipe.class);
 
@@ -45,7 +45,7 @@ public class CustomRecipeRepositoryImpl implements CustomRecipeRepository {
             predicatesAnd.add(cb.in(recipe.get("recipeId")).value(subQuery));
         }
 
-        if (exclude != null && exclude != "") {
+        if (exclude != null && !exclude.isEmpty()) {
             Subquery<Ingredient> subQuery = cq.subquery(Ingredient.class);
             Root<Recipe> rec = subQuery.from(Recipe.class);
 

@@ -10,6 +10,7 @@ import nl.abnamro.recipes.repository.RecipeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,6 +21,10 @@ public class RecipeService {
 
     @Autowired
     private IngredientRepository ingredientRepository;
+
+    public List<Recipe> find(String text, String include, String exclude, Integer servings, Boolean vegetarian) {
+        return recipeRepository.find(text, include, exclude, servings, vegetarian);
+    }
 
     public RecipeDto save(RecipeDto recipeDto) throws ServiceErrorException {
         if (recipeDto.getRecipeId() != null) {

@@ -60,6 +60,11 @@ To run the application using docker, run the following command
     docker compose up
 ````
 
+To create sample data after the application is running via docker, user the following url:
+````
+    http://localhost:8080/api/v1/recipe/sampledata
+````
+
 To execute the tests you can use maven command
 ````shell
 mvnw clean test
