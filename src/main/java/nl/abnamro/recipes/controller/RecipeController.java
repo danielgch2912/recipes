@@ -3,7 +3,6 @@ package nl.abnamro.recipes.controller;
 import lombok.RequiredArgsConstructor;
 import nl.abnamro.recipes.dto.RecipeDto;
 import nl.abnamro.recipes.service.RecipeService;
-import nl.abnamro.recipes.service.ServiceErrorException;
 import nl.abnamro.recipes.utils.SampleData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,41 +28,25 @@ public class RecipeController {
             @RequestParam(required = false) Boolean vegetarian){
 
         var ls = service.find(text, include, exclude, servings, vegetarian);
-
         return RecipeDto.toDTO(ls);
     }
 
     @PostMapping
     public ResponseEntity save(@RequestBody @Valid RecipeDto recipeDto) {
-
-        try {
-            recipeDto = service.save(recipeDto);
-            return ResponseEntity.ok(recipeDto);
-        } catch(ServiceErrorException e) {
-            return ResponseEntity.badRequest().body(e.getErrors());
-        }
+        recipeDto = service.save(recipeDto);
+        return ResponseEntity.ok(recipeDto);
     }
 
     @PutMapping
     public ResponseEntity saveOrUpdate(@RequestBody @Valid RecipeDto recipeDto) {
-
-        try {
-            recipeDto = service.saveOrUpdate(recipeDto);
-            return ResponseEntity.ok(recipeDto);
-        } catch(ServiceErrorException e) {
-            return ResponseEntity.badRequest().body(e.getErrors());
-        }
+        recipeDto = service.saveOrUpdate(recipeDto);
+        return ResponseEntity.ok(recipeDto);
     }
 
     @DeleteMapping("/{recipeId}")
     public ResponseEntity delete(@PathVariable Integer recipeId) {
-
-        try {
-            service.delete(recipeId);
-            return ResponseEntity.ok().build();
-        } catch(ServiceErrorException e) {
-            return ResponseEntity.badRequest().body(e.getErrors());
-        }
+        service.delete(recipeId);
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -75,17 +58,13 @@ public class RecipeController {
     @GetMapping("/sampledata")
     public ResponseEntity GenerateSampleData()
     {
-        try {
-            var data = SampleData.create();
+        var data = SampleData.create();
 
-            for (var d: data) {
-                service.save(d);
-            }
-
-            return ResponseEntity.ok().build();
-        } catch(ServiceErrorException e) {
-            return ResponseEntity.badRequest().body(e.getErrors());
+        for (var d: data) {
+            service.save(d);
         }
+
+        return ResponseEntity.ok().build();
     }
 
 }

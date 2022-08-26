@@ -6,4 +6,6 @@ public class Errors {
     public static String RECIPE_NOT_FOUND = "This recipe was not found in our database";
 
     public static String RECIPE_ID_SHOULD_BE_EMPTY = "The id of the recipe should be empty";
+
+    public static String INTERNAL_SERVER_ERROR = "Internal server error";
 }
