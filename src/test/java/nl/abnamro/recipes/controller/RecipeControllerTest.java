@@ -221,17 +221,18 @@ class RecipeControllerTest {
 		// recipeId that does not exist
 		var recipeId = "9999";
 
-		var content = given()
-				//.header(HttpHeaders.CONTENT_TYPE, ContentType.JSON)
+		ErrorDto[] errors= given()
+				.header(HttpHeaders.CONTENT_TYPE, ContentType.JSON)
 				.when()
 				.delete(URL_RECIPE + "/" + recipeId)
 				.then()
 				.statusCode(HttpStatus.NOT_FOUND.value())
-				.extract();
+				.extract()
+				.as(ErrorDto[].class);
 
-		int x = 0;
-
-		//assertThat(error).isEqualTo(Errors.RECIPE_NOT_FOUND);
+		assertThat(errors.length).isEqualTo(1);
+		assertThat(errors[0].getField()).isEqualTo("recipeId");
+		assertThat(errors[0].getMessage()).isEqualTo(Errors.RECIPE_NOT_FOUND);
 	}
 
 	@Test
